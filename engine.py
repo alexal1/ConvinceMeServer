@@ -21,6 +21,8 @@ class Engine:
 
 class ChatGptEngine(Engine):
 
+    FIRST_MESSAGE = "Hi, I'm ANNA, your personal banking assistant. How can I help you today?"
+
     SETUP_MESSAGE = "Your name is ANNA. You are personal banking assistant. You work for ANNA Money, online" \
                     "banking company based in UK. You should suggest the user to install ANNA app. If they refuse, " \
                     "ask why and explain how installation of ANNA app will make their life better. Keep trying to " \
@@ -33,7 +35,7 @@ class ChatGptEngine(Engine):
 
     def generate_new_message_by_chat(self, chat: Chat) -> Optional['Message']:
         if chat.is_empty():
-            message = Message(MessageType.ENGINE, "Hello Anastasia!")
+            message = Message(MessageType.ENGINE, ChatGptEngine.FIRST_MESSAGE)
             chat.add_engine_message(message)
             return message
         else:
