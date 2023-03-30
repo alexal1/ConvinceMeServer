@@ -54,6 +54,12 @@ class Chat:
 
         return self._messages[-1]
 
+    def to_chat_gpt_format(self):
+        result = []
+        for message in self._messages:
+            result.append(message.to_chat_gpt())
+        return result
+
 
 class Message:
     id: str
@@ -70,6 +76,12 @@ class Message:
             "id": self.id,
             "text": self.text
         })
+
+    def to_chat_gpt(self):
+        return {
+            "role": "user" if self.type == MessageType.USER else "assistant",
+            "content": self.text
+        }
 
 
 @unique
