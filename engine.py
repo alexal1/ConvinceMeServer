@@ -4,7 +4,7 @@ import openai
 
 from const import API_KEY
 from models import Chat, Message, MessageType
-from storage import chats
+from storage import update_chat
 
 
 class Engine:
@@ -12,7 +12,7 @@ class Engine:
     def start_new_chat(self, uuid: str) -> 'Message':
         new_chat = Chat()
         first_message = self.generate_new_message_by_chat(new_chat)
-        chats[uuid] = new_chat
+        update_chat(uuid, new_chat)
         return first_message
 
     def generate_new_message_by_chat(self, chat: Chat) -> 'Message':
