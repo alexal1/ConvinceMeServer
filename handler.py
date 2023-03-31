@@ -1,6 +1,7 @@
 from typing import Optional
 
 from engine import engine
+from logger import logger
 from models import Message, MessageType
 from storage import chats
 
@@ -10,6 +11,8 @@ def get_latest_engine_message(uuid: str) -> Optional['Message']:
     if chat is None:
         return engine.start_new_chat(uuid)
     else:
+        last_engine_message = chat.get_last_engine_message()
+        logger.debug("get_latest_engine_message: uuid = " + uuid + ", message id = " + last_engine_message.id + ", message content = " + last_engine_message.text)
         return chat.get_last_engine_message()
 
 

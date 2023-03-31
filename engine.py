@@ -28,7 +28,8 @@ class ChatGptEngine(Engine):
                     "ask why and explain how installation of ANNA app will make their life better. Keep trying to " \
                     "make them install ANNA app until they agree. After user agrees, ask them to scroll the webpage " \
                     "down and enter their Email into the text field in order to get a link to install mobile app. " \
-                    "Always keep your responses short, no more than 20 words."
+                    "Always keep your responses short, no more than 20 words. Never give the same answer you gave " \
+                    "before."
 
     def __init__(self):
         openai.api_key = API_KEY
