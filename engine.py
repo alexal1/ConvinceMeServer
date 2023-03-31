@@ -3,19 +3,17 @@ from typing import Optional
 import openai
 
 from const import API_KEY
+from logger import logger
 from models import Chat, Message, MessageType
-from storage import chats
+from storage import update_chat, get_chat
 
 
 class Engine:
 
     def start_new_chat(self, uuid: str) -> 'Message':
-        new_chat = Chat()
-        first_message = self.generate_new_message_by_chat(new_chat)
-        chats[uuid] = new_chat
-        return first_message
+        pass
 
-    def generate_new_message_by_chat(self, chat: Chat) -> 'Message':
+    def generate_new_message_by_uuid(self, uuid) -> 'Message':
         pass
 
 
@@ -34,22 +32,27 @@ class ChatGptEngine(Engine):
     def __init__(self):
         openai.api_key = API_KEY
 
-    def generate_new_message_by_chat(self, chat: Chat) -> Optional['Message']:
-        if chat.is_empty():
-            message = Message(MessageType.ENGINE, ChatGptEngine.FIRST_MESSAGE)
-            chat.add_engine_message(message)
-            return message
-        else:
-            last_message = chat.get_last_message()
-            if last_message.type == MessageType.ENGINE:
-                return last_message
-            else:
-                # Actual logic here
-                new_message = self.create_completion_by_chat(chat)
-                chat.add_engine_message(new_message)
-                return new_message
+    def start_new_chat(self, uuid: str) -> 'Message':
+        logger.debug("ENGINE: new chat")
+        message = Message(MessageType.ENGINE, ChatGptEngine.FIRST_MESSAGE)
+        update_chat(uuid, message)
+        return message
 
-    def create_completion_by_chat(self, chat: Chat) -> 'Message':
+    def generate_new_message_by_uuid(self, uuid) -> bool:
+        chat = get_chat(uuid)
+        last_message = chat.get_last_message()
+        if last_message.type == MessageType.ENGINE:
+            logger.debug("ENGINE: returning latest message")
+            return False
+        else:
+            # Actual logic here
+            logger.debug("ENGINE: completion")
+            new_message = self.create_completion_by_chat(chat)
+            update_chat(uuid, new_message)
+            return True
+
+    @staticmethod
+    def create_completion_by_chat(chat: Chat) -> 'Message':
         messages = chat.to_chat_gpt_format()
         messages.insert(0, {
             "role": "user",
@@ -59,26 +62,6 @@ class ChatGptEngine(Engine):
                                                   messages=messages)
         response = completion.choices[0].message.content
         return Message(MessageType.ENGINE, response)
-
-
-class SimpleEngine(Engine):
-
-    def generate_new_message_by_chat(self, chat: Chat) -> Optional['Message']:
-        if chat.is_empty():
-            message = Message(MessageType.ENGINE, "Hello Anastasia!")
-            chat.add_engine_message(message)
-            return message
-        else:
-            last_message = chat.get_last_message()
-            if last_message.type == MessageType.ENGINE:
-                return last_message
-            else:
-                # Actual logic here
-                last_text = last_message.text
-                new_text = last_text[::-1]
-                new_message = Message(MessageType.ENGINE, new_text)
-                chat.add_engine_message(new_message)
-                return new_message
 
 
 engine = ChatGptEngine()

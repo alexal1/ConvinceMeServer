@@ -10,8 +10,8 @@ class Chat:
 
     _messages = []
 
-    def __init__(self):
-        self._messages: list['Message'] = []
+    def __init__(self, messages=None):
+        self._messages: list['Message'] = messages or []
 
     def is_empty(self):
         return len(self._messages) == 0
@@ -66,8 +66,8 @@ class Message:
     text: str
     type: 'MessageType'
 
-    def __init__(self, type, text):
-        self.id = str(uuid.uuid4())
+    def __init__(self, type, text, id=None):
+        self.id = id or str(uuid.uuid4())
         self.type = type
         self.text = text
 
@@ -88,3 +88,11 @@ class Message:
 class MessageType(Enum):
     USER = "user"
     ENGINE = "engine"
+
+    @staticmethod
+    def by(value) -> 'MessageType':
+        if value == "user":
+            return MessageType.USER
+        else:
+            return MessageType.ENGINE
+
