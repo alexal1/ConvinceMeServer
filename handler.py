@@ -9,6 +9,8 @@ from storage import chats
 def get_latest_engine_message(uuid: str) -> Optional['Message']:
     chat = chats.get(uuid)
     if chat is None:
+        first_message = engine.start_new_chat(uuid)
+        logger.error("NEW CHAT first_message: uuid = " + uuid + ", message id = " + first_message.id + ", message content = " + first_message.text)
         return engine.start_new_chat(uuid)
     else:
         last_engine_message = chat.get_last_engine_message()
