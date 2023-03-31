@@ -12,7 +12,7 @@ def get_latest_engine_message(uuid: str) -> Optional['Message']:
         return engine.start_new_chat(uuid)
     else:
         last_engine_message = chat.get_last_engine_message()
-        logger.debug("get_latest_engine_message: uuid = " + uuid + ", message id = " + last_engine_message.id + ", message content = " + last_engine_message.text)
+        logger.error("get_latest_engine_message: uuid = " + uuid + ", message id = " + last_engine_message.id + ", message content = " + last_engine_message.text)
         return chat.get_last_engine_message()
 
 
